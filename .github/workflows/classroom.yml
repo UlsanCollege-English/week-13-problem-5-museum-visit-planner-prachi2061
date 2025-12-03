@@ -1,8 +1,8 @@
 name: Autograding Tests
 
 on:
-  push
-  workflow_dispatch
+  push:
+  workflow_dispatch:
 
 permissions:
   checks: write
@@ -21,7 +21,6 @@ jobs:
         id: tests
         uses: classroom-resources/autograding-python-grader@v1
         env:
-          # Prevent third‑party plugin conflicts
           PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         with:
           timeout: 10
