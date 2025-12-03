@@ -1,31 +1,33 @@
+from collections import deque
+from typing import Iterable, List, Tuple, Dict
 
-
-
-def shortest_path(rooms, doors, start, goal):
-    """
-    Compute one shortest path between start and goal in an undirected graph.
-
-    rooms: list of room name strings.
-    doors: list of (a, b) pairs, each pair is an undirected door between rooms a and b.
-    start: start room name.
-    goal: goal room name.
-
-    Return:
-      - list of room names from start to goal (inclusive) for one shortest path,
-      - [start] if start == goal,
-      - [] if no path exists.
-    """
-
-    # TODO Steps 1–3: Restate the problem and choose a graph representation.
-    # TODO Steps 4–5: Plan a BFS that tracks parents and stops when goal is found.
-    # TODO Step 6: Implement BFS and path reconstruction.
-    # TODO Step 7: Test with small maps (lines, branches, isolated rooms).
-    # TODO Step 8: Confirm complexity is about O(n + m).
-    pass
-
-
-if __name__ == "__main__":
-    # Optional manual test
-    rooms = ["Entrance", "Hall", "Gallery", "Cafe"]
-    doors = [("Entrance", "Hall"), ("Hall", "Gallery"), ("Gallery", "Cafe")]
-    print(shortest_path(rooms, doors, "Entrance", "Cafe"))
+def shortest_path(rooms: Iterable[str], doors: Iterable[Tuple[str, str]], start: str, goal: str) -> List[str]:
+    room_set = set(rooms)
+    if start not in room_set or goal not in room_set:
+        return []
+    if start == goal:
+        return [start]
+    adj: Dict[str, List[str]] = {r: [] for r in room_set}
+    for a, b in doors:
+        if a in room_set and b in room_set:
+            adj[a].append(b)
+            adj[b].append(a)
+    q = deque([start])
+    visited = {start}
+    parent: Dict[str, str] = {}
+    while q:
+        u = q.popleft()
+        if u == goal:
+            break
+        for v in adj.get(u, []):
+            if v not in visited:
+                visited.add(v)
+                parent[v] = u
+                q.append(v)
+    if goal not in visited:
+        return []
+    path = [goal]
+    while path[-1] != start:
+        path.append(parent[path[-1]])
+    path.reverse()
+    return path
